@@ -24,10 +24,11 @@ public class StartingLineScript : MonoBehaviour
     public Transform wow;
     public MeshRenderer[] LEDs;
     public TextAsset JSON;
+    public bool TestMode;
 
-    static private int _moduleIdCounter = 1;
+    static private int _moduleIdCounter = 1, gone = 1;
     static private bool Ret2Go = false;
-    private int _moduleId;
+    private int _moduleId, here;
     private string startingLine;
     private string NameOfSelectedMod;
     private int countdone;
@@ -36,13 +37,14 @@ public class StartingLineScript : MonoBehaviour
     private char[] keylets = new char[4];
     private bool[] pressed = new bool[4] { false, false, false, false };
     private int stage;
-    private static readonly string[] SolveTexts = { "Ya did.", "Boing!", "Congrats!", "This is the story of a girl...", "It's been one week since you've looked at me...", "Somebody once told me...", "The world is a vampire...", "Uno, dos, one two tres quatro!...", "Can't touch this...", "I've got another confession to make...", "We know where we're going...", "Everybody dance now...", "Reluctantly crouched at �����...", "This is how we do it...", "One, two, three, uh...", "Did you know that in terms of manual edge cases, The Radio has one of the worst?- wait. wrong paper." };
+    private static readonly string[] SolveTexts = { "Ya did.", "Boing!", "Congrats!", "This is the story of a girl...", "It's been one week since you've looked at me...", "Somebody once told me...", "The world is a vampire...", "Uno, dos, one two tres quatro!...", "Can't touch this...", "I've got another confession to make...", "We know where we're going...", "Everybody dance now...", "Reluctantly crouched at �����...", "This is how we do it...", "One, two, three, uh...", "Did you know that in terms of manual edge cases, The Radio has one of the worst?- wait. wrong paper.", "I hope they weren't as bad as something like \"Batteries\"...", "Whey! Nice job champ.", "lesgo", "Oh, come on, those were easy ones...", "Did you know? This module used to ping the repo 1800 times. Needless to say, Timwi wasn't happy.", "Also try Flavor Text!", "Also try Flavor Text EX!", "did you know that i draw? now you do.", "Did you know that you are an amazing person? Have a great day! <3", "I hope you have a wonderful day you beautiful person!", "Awesome.", "I'm so sick of this SONG dude...", "You're walking into a room. There's nobody around and your phone is dead. Out of the corner of you eye you spot it- the bomb.", "Challenge: If you have Aphantasia, can you imagine a red star for me?", "FALL GUYS\nAMONG US\n\n-Lootcrates", "Jesús Koch placed the Super Roamin' Fifth Base in The Oven!"};
     static Dictionary<string, string> RepoModules;
 
     void Awake()
     {
         wow.GetComponent<MeshRenderer>().enabled = false;
         _moduleId = _moduleIdCounter++;
+        here = gone++;
         for (byte i = 0; i < buttons.Length; i++)
         {
             KMSelectable btn = buttons[i];
@@ -124,7 +126,7 @@ public class StartingLineScript : MonoBehaviour
     }
     IEnumerator WaitPatientlyForTheRepoToLoad()
     {
-        if (_moduleId != 1)
+        if (here != 1)
         {
             text.text = "Another instance of the module is loading the lines, please wait.";
         }
@@ -215,6 +217,7 @@ public class StartingLineScript : MonoBehaviour
         Debug.LogFormat("Finished!");
         Debug.Log(RepoModules.Join(" , "));
         Ret2Go = true;
+        gone = 1    ;
 
     }
     IEnumerator Element(Module i)
@@ -237,34 +240,32 @@ public class StartingLineScript : MonoBehaviour
             case "Stable Time Signatures":
                 startingLine = "This module looks identical to �����, but there are a couple of functional differences.";
                 break;
-            case "Adjacent Letters (Russian)":
-                startingLine = "На каждой клавише написана буква.";
+            case "ReGrettaBle Relay":
+                startingLine = "The module may look familiar to �����,, however, the module has a status light not shaped like a sphere; has no timer LEDs; and is rotated due to poor placement.";
                 break;
-            case "Bomb It! JA":
-                startingLine = "上部の再生ボタンを押してモジュールを開始する。";
+            case "Custom Keys":
+                startingLine = "There will be two keys and a connection code at the top of the module.";
                 break;
-            case "Caesar Cycle PL":
-                startingLine = "Ten moduł składa się z ekranu, ośmiu podpisanych znaczników oraz klawiatury QWERTY.";
+            case "Duck, Duck, Goose":
+                startingLine = "Upon activating, the module will prompt the user to identify if a displayed bird is a duck, a goose, or neither one of the two species by pressing buttons with corresponding labels.";
                 break;
-            case "Colour Flash PL":
-                startingLine = "Ten moduł powtarza w kółko sekwencję 8 różnych słów, które są kolorami w różnych kolorach.";
+            case "Llama, Llama, Alpaca":
+                startingLine = "Upon activating, the module will prompt the user to identify if a displayed animal is a llama, an alpaca, or neither one of those two by pressing buttons with corresponding labels. ";
                 break;
-            case "Colour Flash ES":
-                startingLine = "Un módulo de ����� repetirá una secuencia de 8 palabras distintas, representando colores en colores distintos.";
+            case "Simon Simons":
+                startingLine = "This module contains 4 Simon Says modules.";
                 break;
-            case "Word Search (PL)":
-                startingLine = "Na module znajduje się pole z 36 literami.";
+            case "Scrutiny Squares":
+                startingLine = "The screen displays a slightly modified version of one of the squares below.";
                 break;
-            case "Insane Talk PL":
-                startingLine = "Moduł składa się z wyświetlacza, na którym znajduje się tekst.";
-                break;
+
             default:
                 startingLine = mod.Line;
                 startingLine = Regex.Replace(startingLine.Trim(), @"<.+?>", "");
                 Match m = Regex.Match(startingLine, @"(.+?(?:\n|$|\.|!|\?))", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-                if (!m.Success)
+                if (!m.Success || startingLine == "[Manual has no starting line]")
                 {
-                    Debug.LogWarning("MODULE " + mod.Name + " HAS NO FIRST LINE.");
+                    Debug.LogWarning("Module " + mod.Name + " has no starting line.");
                 }
                 else
                 {
@@ -277,7 +278,7 @@ public class StartingLineScript : MonoBehaviour
                     startingLine = startingLine.Replace("&rsquo:", "\'");
                     startingLine = startingLine.Replace("&#x00d7;", "×");
                     startingLine = startingLine.Replace("&trade;", "™");
-                    string tempname = ModuleName.Replace("+", "\\+");
+                    string tempname = Regex.Escape(ModuleName);
                     startingLine = Regex.Replace(startingLine, tempname, Enumerable.Repeat("�", 5).Join(""), RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
                     if (ModuleName.Length >= 4 && ModuleName.Substring(0, 4) == "The ")
                     {
@@ -347,23 +348,26 @@ public class StartingLineScript : MonoBehaviour
         Fetch = new WWW("https://ktane.timwi.de/json/startingline");
         Debug.LogFormat("Attempting to reach the Repository for updates...");
         yield return Fetch;
-        if (Fetch.error == null)
-        {
-            Debug.Log("JSON successfully fetched!");
-            string Fetched = Fetch.text.Substring(16, Fetch.text.Length - 17);
-            Debug.Log(Fetched);
-            RepoJson = JsonConvert.DeserializeObject<List<Module>>(Fetched);
-            if (LocalJson != RepoJson)
+        if (!Application.isEditor || !TestMode)
+        { 
+            if (Fetch.error == null)
             {
-                Debug.Log("Local JSON appears out of date... Updating local json!");
-                File.WriteAllText(Path.Combine(Application.persistentDataPath, "startingline.json"), Fetched);
-                LocalJson = RepoJson;
+                Debug.Log("JSON successfully fetched!");
+                string Fetched = Fetch.text.Substring(16, Fetch.text.Length - 17);
+                Debug.Log(Fetched);
+                RepoJson = JsonConvert.DeserializeObject<List<Module>>(Fetched);
+                if (LocalJson != RepoJson)
+                {
+                    Debug.Log("Local JSON appears out of date... Updating local json!");
+                    File.WriteAllText(Path.Combine(Application.persistentDataPath, "startingline.json"), Fetched);
+                    LocalJson = RepoJson;
+                }
             }
-        }
-        else
-        {
-            Debug.LogFormat("An error has occurred while fetching modules from the repository: {0}. Using current version.", Fetch.error);
-        }
+            else
+            {
+                Debug.LogFormat("An error has occurred while fetching modules from the repository: {0}. Using current version.", Fetch.error);
+            }
+    }
         Debug.LogFormat("Name of the last module: {0}", LocalJson[LocalJson.Count - 1].Name);
         _done = true;
     }

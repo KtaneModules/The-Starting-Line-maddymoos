@@ -2309,6 +2309,7 @@ MonoBehaviour:
   - {fileID: 23039240477816624}
   - {fileID: 23764961621230290}
   JSON: {fileID: 4900000, guid: 37d72c2e660f1f841a586e5afe18e543, type: 3}
+  TestMode: 0
 --- !u!114 &114402386641150216
 MonoBehaviour:
   m_ObjectHideFlags: 1
