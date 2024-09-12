@@ -148,6 +148,7 @@ public class StartingLineScript : MonoBehaviour
             ModuleName = mod.Key;
             startingLine = mod.Value;
         }
+
         LetterGen(ModuleName);
         Debug.LogFormat("[The Starting Line #{0}]: Selected {1}'s text of \"{2}\".", _moduleId, ModuleName, startingLine);
         Debug.LogFormat("[The Starting Line #{0}]: Displaying letters {1}", _moduleId, keylets.Join(""));
@@ -215,7 +216,8 @@ public class StartingLineScript : MonoBehaviour
         yield return new WaitForSeconds(1f);
         wow.GetComponent<MeshRenderer>().enabled = false;
         Debug.LogFormat("Finished!");
-        Debug.Log(RepoModules.Join(" , "));
+        //shut up
+        //Debug.Log(RepoModules.Join(" , "));
         Ret2Go = true;
         gone = 1    ;
 
@@ -241,7 +243,7 @@ public class StartingLineScript : MonoBehaviour
                 startingLine = "This module looks identical to �����, but there are a couple of functional differences.";
                 break;
             case "ReGrettaBle Relay":
-                startingLine = "The module may look familiar to �����,, however, the module has a status light not shaped like a sphere; has no timer LEDs; and is rotated due to poor placement.";
+                startingLine = "The module may look familiar to �����, however, the module has a status light not shaped like a sphere; has no timer LEDs; and is rotated due to poor placement.";
                 break;
             case "Custom Keys":
                 startingLine = "There will be two keys and a connection code at the top of the module.";
@@ -257,6 +259,18 @@ public class StartingLineScript : MonoBehaviour
                 break;
             case "Scrutiny Squares":
                 startingLine = "The screen displays a slightly modified version of one of the squares below.";
+                break;
+            case "Big Bike Repair":
+                startingLine = "You've come to the right place for choosing Big Guys: �����!";
+                break;
+            case "Role Reversal":
+                startingLine = "Seed:����� Tutorial";
+                break;
+            case "Reformed Role Reversal":
+                startingLine = "[Tutorial] Regarding �����";
+                break;
+            case "Roger":
+                startingLine = "The module is not here, however it has been sent to your expert.";
                 break;
 
             default:
@@ -354,8 +368,9 @@ public class StartingLineScript : MonoBehaviour
             {
                 Debug.Log("JSON successfully fetched!");
                 string Fetched = Fetch.text.Substring(16, Fetch.text.Length - 17);
-                Debug.Log(Fetched);
-                RepoJson = JsonConvert.DeserializeObject<List<Module>>(Fetched);
+                //Debug.Log(Fetched);
+                RepoJson = JsonConvert.DeserializeObject<Dictionary<string, List<Module>>>(Fetch.text)["KtaneModules"];
+
                 if (LocalJson != RepoJson)
                 {
                     Debug.Log("Local JSON appears out of date... Updating local json!");
@@ -398,7 +413,7 @@ public class StartingLineScript : MonoBehaviour
     IEnumerator ProcessTwitchCommand(string command)
     {
         string input = command.Join("");
-        Debug.Log(input);
+        //Debug.Log(input);
         if (Regex.IsMatch(input, @"^\s*[1234]+\s*$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant))
         {
             if (input.Length > 4)
